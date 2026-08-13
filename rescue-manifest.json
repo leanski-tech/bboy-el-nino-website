@@ -1,0 +1,65 @@
+{
+  "startUrl": "https://bboyelnino.com/",
+  "fetchedAt": "2026-08-13T03:09:44.966Z",
+  "pages": [
+    {
+      "url": "https://bboyelnino.com/",
+      "finalUrl": "https://bboyelnino.com/",
+      "path": "index.html",
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 21860912,
+      "kind": "page"
+    }
+  ],
+  "assets": [],
+  "external": [
+    {
+      "url": "https://fonts.googleapis.com/"
+    },
+    {
+      "url": "https://fonts.gstatic.com/"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap"
+    },
+    {
+      "url": "https://venmo.com/code?user_id=3376135891058688908&created=1780941477.853585&printed=1"
+    },
+    {
+      "url": "https://maps.google.com/?q=66+Winthrop+Street+Cambridge+MA"
+    },
+    {
+      "url": "https://www.instagram.com/bboyelnino/"
+    },
+    {
+      "url": "https://www.tiktok.com/@bboy.elnino"
+    },
+    {
+      "url": "https://www.youtube.com/channel/UCBzJMOr3R9MgalBhq8aia5Q"
+    },
+    {
+      "url": "https://www.facebook.com/BboyElNino"
+    },
+    {
+      "url": "https://x.com/bboyelnino"
+    },
+    {
+      "url": "https://www.floorlords.org/"
+    },
+    {
+      "url": "http://www.vlsclothing.com/"
+    }
+  ],
+  "failed": [
+    {
+      "url": "https://bboyelnino.com/$%7Bphoto.src%7D",
+      "kind": "asset",
+      "error": "404 Not Found"
+    },
+    {
+      "url": "https://bboyelnino.com/%23n",
+      "kind": "page",
+      "error": "404 Not Found"
+    }
+  ]
+}
