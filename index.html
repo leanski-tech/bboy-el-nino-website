@@ -207,9 +207,45 @@
     .chat-toggle{right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));width:54px;height:54px}
     .chat-panel{right:8px;left:8px;width:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));max-height:calc(100dvh - 96px)}
   }
+
+  /* ---------- Polish pass (added 2026-11-08): same style, more shine ---------- */
+  ::selection{background:var(--red);color:#fff}
+  html{scrollbar-width:thin;scrollbar-color:var(--red) var(--bg2)}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-track{background:var(--bg2)}
+  ::-webkit-scrollbar-thumb{background:#3a3a40;border-radius:6px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--red)}
+  #scrollProgress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--red-dark),var(--red));z-index:200;box-shadow:0 0 12px rgba(232,50,42,.55)}
+  .hero img.bg{animation:heroZoom 26s ease-in-out infinite alternate}
+  @keyframes heroZoom{from{transform:scale(1) translateY(0)}to{transform:scale(1.09) translateY(-1.5%)}}
+  .hero-inner>*{animation:heroIn 1s cubic-bezier(.22,.8,.32,1) both}
+  .hero-inner>*:nth-child(2){animation-delay:.12s}
+  .hero-inner>*:nth-child(3){animation-delay:.24s}
+  .hero-inner>*:nth-child(4){animation-delay:.36s}
+  .hero-inner>*:nth-child(5){animation-delay:.5s}
+  @keyframes heroIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  .hero-tag i{animation:pulseDot 2.2s ease-in-out infinite}
+  @keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(232,50,42,.55)}50%{box-shadow:0 0 0 7px rgba(232,50,42,0)}}
+  .btn{position:relative;overflow:hidden}
+  .btn::after{content:"";position:absolute;top:0;bottom:0;left:-80%;width:55%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none}
+  .btn:hover::after{left:130%}
+  .gal-grid figure::before{content:"";position:absolute;top:0;bottom:0;left:-90%;width:55%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-18deg);transition:left .7s ease;pointer-events:none;z-index:1}
+  .gal-grid figure:hover::before{left:135%}
+  .gal-grid figure{transition:box-shadow .4s ease}
+  .gal-grid figure:hover{box-shadow:0 18px 44px rgba(0,0,0,.5)}
+  .svc{transition:border-color .2s ease,transform .2s ease,box-shadow .3s ease}
+  .svc:hover{box-shadow:0 16px 40px rgba(0,0,0,.45)}
+  .event-card{box-shadow:0 24px 60px rgba(0,0,0,.35)}
+  .socials a{transition:color .2s ease,border-color .2s ease,transform .2s ease}
+  .socials a:hover{transform:translateY(-2px)}
+  @media (prefers-reduced-motion:reduce){
+    .hero img.bg,.hero-inner>*,.hero-tag i{animation:none}
+    .btn::after,.gal-grid figure::before{display:none}
+  }
 </style>
 </head>
 <body>
+<div id="scrollProgress"></div>
 
 <header id="siteHeader">
   <div class="wrap nav">
@@ -677,6 +713,48 @@
     setTimeout(function(){addMsg(ans,'bot');},180);
   });
 })();
+</script>
+<script>
+  (function(){
+    var bar = document.getElementById('scrollProgress');
+    if(bar){
+      var ticking = false;
+      function upd(){
+        var h = document.documentElement;
+        var max = h.scrollHeight - h.clientHeight;
+        var y = window.scrollY || 0;
+        bar.style.width = (max > 0 ? (y / max * 100) : 0) + '%';
+        ticking = false;
+      }
+      window.addEventListener('scroll', function(){ if(!ticking){ ticking = true; requestAnimationFrame(upd); } }, {passive:true});
+      upd();
+    }
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var stats = document.querySelectorAll('.hero-stats b');
+    if(!reduce && 'IntersectionObserver' in window){
+      var io2 = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if(!en.isIntersecting) return;
+          var el = en.target; io2.unobserve(el);
+          var m = el.textContent.trim().match(/^([^\d]*)([\d.]+)(.*)$/);
+          if(!m) return;
+          var pre = m[1], target = parseFloat(m[2]), suf = m[3];
+          var dec = (m[2].indexOf('.') > -1) ? 1 : 0;
+          var start = null, dur = 1500;
+          function step(ts){
+            if(!start) start = ts;
+            var p = Math.min((ts - start) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = pre + (target * eased).toFixed(dec) + suf;
+            if(p < 1) requestAnimationFrame(step);
+            else el.textContent = pre + (dec ? target.toFixed(dec) : String(target)) + suf;
+          }
+          requestAnimationFrame(step);
+        });
+      }, {threshold:.4});
+      stats.forEach(function(el){ io2.observe(el); });
+    }
+  })();
 </script>
 </body>
 </html>
