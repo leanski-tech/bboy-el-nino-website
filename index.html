@@ -242,9 +242,59 @@
     .hero img.bg,.hero-inner>*,.hero-tag i{animation:none}
     .btn::after,.gal-grid figure::before{display:none}
   }
+
+  /* ---------- Flash pass (added 2026-11-09): new elements, same style ---------- */
+  .preloader{position:fixed;inset:0;z-index:400;background:var(--bg);display:flex;align-items:center;justify-content:center;animation:preOut .6s ease 1.2s forwards}
+  .pre-name{font-size:clamp(38px,9vw,84px);color:#fff;line-height:1;text-align:center;animation:heroIn .7s cubic-bezier(.22,.8,.32,1) both}
+  .pre-name span{color:var(--red)}
+  .pre-bar{height:3px;background:#26262b;margin:20px auto 0;width:min(320px,70vw);border-radius:2px;overflow:hidden}
+  .pre-bar i{display:block;height:100%;background:var(--red);transform-origin:left;animation:preBar 1.05s cubic-bezier(.22,.8,.32,1) forwards}
+  @keyframes preBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @keyframes preOut{to{opacity:0;visibility:hidden}}
+  .hero-badge{position:absolute;right:clamp(18px,4vw,52px);top:104px;width:128px;height:128px;z-index:3;animation:badgeSpin 18s linear infinite;pointer-events:none}
+  .hero-badge svg{width:100%;height:100%;display:block}
+  .hero-badge text{font-family:"Archivo",sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.18em;fill:#fff}
+  .hero-badge::before{content:"";position:absolute;left:50%;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;background:var(--red);transform:rotate(45deg)}
+  .hero-badge::after{content:"";position:absolute;inset:30px;border:1px solid rgba(255,255,255,.35);border-radius:50%}
+  @keyframes badgeSpin{to{transform:rotate(360deg)}}
+  @media (max-width:700px){.hero-badge{width:94px;height:94px;top:92px}.hero-badge::after{inset:22px}}
+  .outline-band{overflow:hidden;padding-top:10px}
+  .outline-track{display:flex;width:max-content;animation:scroll 32s linear infinite}
+  .outline-band span{font-family:"Anton",sans-serif;text-transform:uppercase;font-size:clamp(64px,10.5vw,138px);line-height:1.02;padding:0 26px;white-space:nowrap;color:transparent;-webkit-text-stroke:1.5px #34343b}
+  .outline-band span.hot{color:var(--red);-webkit-text-stroke:1.5px var(--red)}
+  .outline-band.rev .outline-track{animation-direction:reverse}
+  .gal-grid figure{cursor:zoom-in}
+  .lightbox{position:fixed;inset:0;z-index:300;background:rgba(5,5,6,.94);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center}
+  .lightbox.open{display:flex}
+  .lb-stage{max-width:min(1100px,92vw);text-align:center}
+  .lb-stage img{max-width:100%;max-height:78vh;object-fit:contain;border-radius:6px;border:2px solid var(--red);box-shadow:0 30px 80px rgba(0,0,0,.6);margin:0 auto}
+  .lb-stage figcaption{color:#fff;font-weight:600;margin-top:14px;font-size:15px;letter-spacing:.03em}
+  .lightbox button{position:absolute;background:rgba(23,23,26,.88);color:#fff;border:1px solid var(--line);width:48px;height:48px;border-radius:50%;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;padding:0}
+  .lightbox button:hover{border-color:var(--red);background:var(--red)}
+  .lb-close{top:20px;right:20px}
+  .lb-prev{left:18px;top:50%;transform:translateY(-50%)}
+  .lb-next{right:18px;top:50%;transform:translateY(-50%)}
+  @media (max-width:640px){.lb-prev{left:10px}.lb-next{right:10px}.lightbox button{width:42px;height:42px}}
+  .booking{position:relative;overflow:hidden}
+  .booking::before{content:"";position:absolute;top:-20%;bottom:-20%;left:-30%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);transform:skewX(-18deg);animation:bookShine 5.5s ease-in-out infinite;pointer-events:none}
+  @keyframes bookShine{0%,55%{left:-30%}85%,100%{left:115%}}
+  #toTop{position:fixed;left:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:95;width:48px;height:48px;border-radius:50%;background:var(--panel);color:#fff;border:1px solid var(--line);font-size:20px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease,background .2s ease}
+  #toTop.show{opacity:1;pointer-events:auto;transform:none}
+  #toTop:hover{background:var(--red);border-color:var(--red)}
+  @media (prefers-reduced-motion:reduce){
+    .preloader{display:none}
+    .hero-badge,.booking::before{animation:none}
+    .outline-track{animation:none}
+  }
 </style>
 </head>
 <body>
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div>
+    <div class="pre-name display">B-Boy <span>El Niño</span></div>
+    <div class="pre-bar"><i></i></div>
+  </div>
+</div>
 <div id="scrollProgress"></div>
 
 <header id="siteHeader">
@@ -266,6 +316,12 @@
 <!-- HERO -->
 <div class="hero" id="top">
   <img class="bg" src="https://cdn.jsdelivr.net/gh/leanski-tech/bboy-el-nino-website@main/assets/img-86d249decf.svg" alt="B-Boy El Niño performing in the cypher at Red Bull BC One Camp USA, crowd circled around him" />
+  <div class="hero-badge" aria-hidden="true">
+    <svg viewBox="0 0 120 120">
+      <defs><path id="badgeCirc" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0" /></defs>
+      <text><textPath href="#badgeCirc" textLength="292" lengthAdjust="spacingAndGlyphs">WORLD CHAMPION &#8226; RED BULL BC ONE &#8226; FLOORLORDS CREW &#8226;</textPath></text>
+    </svg>
+  </div>
   <div class="wrap hero-inner">
     <span class="hero-tag"><i></i> Boston, MA &nbsp;·&nbsp; World Champion Breaker</span>
     <h1 class="display">B-Boy<br /><span class="outline">El</span> Niño</h1>
@@ -360,6 +416,8 @@
     </div>
   </div>
 </section>
+
+<div class="outline-band" aria-hidden="true"><div class="outline-track"><span>El Niño</span><span class="hot">El Niño</span><span>El Niño</span><span class="hot">El Niño</span><span>El Niño</span><span class="hot">El Niño</span></div></div>
 
 <!-- GALLERY -->
 <section id="gallery" style="padding-top:0">
@@ -533,6 +591,8 @@
     </div>
   </div>
 </section>
+
+<div class="outline-band rev" aria-hidden="true"><div class="outline-track"><span>Floorlords</span><span class="hot">Floorlords</span><span>Floorlords</span><span class="hot">Floorlords</span><span>Floorlords</span><span class="hot">Floorlords</span></div></div>
 
 <!-- BOOKING -->
 <section class="booking">
@@ -753,6 +813,52 @@
         });
       }, {threshold:.4});
       stats.forEach(function(el){ io2.observe(el); });
+    }
+  })();
+</script>
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-close" id="lbClose" aria-label="Close photo viewer">&times;</button>
+  <button class="lb-prev" id="lbPrev" aria-label="Previous photo">&#8249;</button>
+  <figure class="lb-stage">
+    <img id="lbImg" src="" alt="" />
+    <figcaption id="lbCap"></figcaption>
+  </figure>
+  <button class="lb-next" id="lbNext" aria-label="Next photo">&#8250;</button>
+</div>
+<button id="toTop" aria-label="Back to top">&#8593;</button>
+<script>
+  (function(){
+    var pre = document.getElementById('preloader');
+    if(pre){ setTimeout(function(){ pre.style.display = 'none'; }, 2800); }
+    var figs = Array.prototype.slice.call(document.querySelectorAll('.gal-grid figure'));
+    var lb = document.getElementById('lightbox');
+    if(figs.length && lb){
+      var img = document.getElementById('lbImg'), cap = document.getElementById('lbCap'), cur = 0;
+      function show(i){
+        cur = (i + figs.length) % figs.length;
+        var f = figs[cur], im = f.querySelector('img'), fc = f.querySelector('figcaption');
+        img.src = im.currentSrc || im.src;
+        img.alt = im.alt || '';
+        cap.textContent = fc ? fc.textContent : '';
+      }
+      function open(i){ show(i); lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); document.body.style.overflow = 'hidden'; }
+      function close(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); document.body.style.overflow = ''; }
+      figs.forEach(function(f, i){ f.addEventListener('click', function(){ open(i); }); });
+      document.getElementById('lbClose').addEventListener('click', close);
+      document.getElementById('lbPrev').addEventListener('click', function(e){ e.stopPropagation(); show(cur - 1); });
+      document.getElementById('lbNext').addEventListener('click', function(e){ e.stopPropagation(); show(cur + 1); });
+      lb.addEventListener('click', function(e){ if(e.target === lb) close(); });
+      document.addEventListener('keydown', function(e){
+        if(!lb.classList.contains('open')) return;
+        if(e.key === 'Escape') close();
+        if(e.key === 'ArrowLeft') show(cur - 1);
+        if(e.key === 'ArrowRight') show(cur + 1);
+      });
+    }
+    var toTop = document.getElementById('toTop');
+    if(toTop){
+      window.addEventListener('scroll', function(){ toTop.classList.toggle('show', window.scrollY > 600); }, {passive:true});
+      toTop.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
     }
   })();
 </script>
