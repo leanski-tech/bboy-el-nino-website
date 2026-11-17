@@ -417,11 +417,24 @@ section[id]{scroll-margin-top:96px}
   .event-card{grid-template-columns:96px 1fr}
   .event-action{grid-column:2}
 }
+@media (max-width:1180px){
+  .hero-badge{display:none}
+}
+@media (max-height:520px){
+  .hero-badge{display:none}
+}
 @media (max-width:600px){
   body{font-size:16px}
   .top-bar-text{display:none}
-  .hero{padding-top:120px}
-  .hero-title{font-size:clamp(56px,17vw,84px)}
+  .hero{padding-top:96px;min-height:124svh}
+  .hero-bg-img{object-position:58% 18%}
+  .hero-tag-sub{display:none}
+  .hero-studio-pill{display:none}
+  .hero-title{font-size:clamp(50px,15vw,76px)}
+  .hero-lead{font-size:16px;margin-top:16px}
+  .hero-ctas{margin-top:24px}
+  .hero-stats-bar{margin-top:36px}
+  .stat-card{padding:18px 10px}
   .hero-ctas .btn{flex:1;justify-content:center}
   .chapter-nav{grid-template-columns:1fr}
   .t-item{gap:14px}
