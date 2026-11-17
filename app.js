@@ -263,75 +263,88 @@
     });
   }
 
-  /* ---------- Cypher Bot chat ---------- */
+  /* ---------- Chat: Ask about El Ni\u00f1o (carried over from the previous site) ---------- */
+  var BOOK_EMAIL = "bboyelninoboston@gmail.com";
+  var STUDIO_EMAIL = "floorlordsboston@gmail.com";
+  function mailLink(email) { return '<a href="mailto:' + email + '">' + email + '</a>'; }
   var ANSWERS = {
-    book: "To book El Niño for battles, judging, workshops, or appearances, email bboyelninoboston@gmail.com or use the booking form on this page. Serious inquiries get a direct reply from his team.",
-    workshops: "El Niño teaches workshops and masterclasses worldwide, all levels: foundation, footwork, power moves, freezes, and battle strategy. He also runs classes at Floorlords Studio in Cambridge, MA. Email bboyelninoboston@gmail.com to set one up.",
-    studio: "Floorlords Studio is at 66 Winthrop Street, Cambridge, MA (Harvard Square). It is the crew's home base for classes, training, and cyphers. Email floorlordsboston@gmail.com for class info.",
-    event: "Next up: Nov 27 to 29, 2026, Red Bull BC One World Final in Toronto, Canada, where he battles with the crew. Then Dec 4 to 6 he judges the Kazakhstan Breaking Championships in Astana, and Dec 12 he judges the Ground Zero Crew 30 Year Anniversary in Miami.",
-    who: "Alex Diaz, B-Boy El Niño, is a world champion breaker from Boston. He won Red Bull Lords of the Floor at 11 years old, is a Red Bull BC One Ambassador, and is President of Floorlords Crew, founded in Boston in 1981 by his uncles, Lino Leanski Delgado and Noz."
+    greeting: 'Aloha, welcome. I can help with bookings, workshops, judging, speaking, and the Floorlords Studio. Tap a question below or type your own.',
+    book: 'To book El Ni\u00f1o for workshops, judging, speaking, or an appearance, email ' + mailLink(BOOK_EMAIL) + '. That inbox goes straight to him. Let him know your date, city, and what you have in mind.',
+    workshops: 'El Ni\u00f1o offers Breaking Workshops and Hip Hop History, plus classes through the Floorlords Studio. He has 28+ years of teaching behind him. For workshop bookings or class details, email ' + mailLink(BOOK_EMAIL) + ' \u2014 for the studio, you can also reach ' + mailLink(STUDIO_EMAIL) + '.',
+    studio: 'Floorlords Studio is at 66 Winthrop Street, Cambridge, MA (Harvard Square). Studio email: ' + mailLink(STUDIO_EMAIL) + '. For bookings with El Ni\u00f1o himself, use ' + mailLink(BOOK_EMAIL) + '.',
+    event: 'Next up: the Red Bull BC One World Final, Nov 27 to 29, 2026 in Toronto, Canada. Then the Kazakhstan Breaking Championships in Astana, Dec 4 to 6, where El Ni\u00f1o is judging, and the Ground Zero Crew 30 Year Anniversary on Dec 12 in Miami, where he is judging alongside Crumbs and Moy.',
+    who: 'Alex Diaz is B-Boy El Ni\u00f1o \u2014 world champion breaker from Boston, president of the Floorlords Crew (Boston, since 1981). He won his first world title at age 11, has performed in 35+ countries, and has 28+ years of teaching.',
+    services: 'El Ni\u00f1o can be booked for four things: Breaking Workshops, Hip Hop History, Event Judging, and Keynote & Speaking. To book any of them, email ' + mailLink(BOOK_EMAIL) + '.',
+    judge: 'For Event Judging, El Ni\u00f1o brings three decades at the top of the battle scene. To book him as a judge, email ' + mailLink(BOOK_EMAIL) + ' with your event date and city.',
+    speak: 'For Keynote & Speaking, El Ni\u00f1o shares a story that starts with a world title at age 11 and leads the Floorlords Crew today. To book him to speak, email ' + mailLink(BOOK_EMAIL) + '.',
+    history: 'Hip Hop History is one of his booking services \u2014 the real story of the culture, told by somebody who lived it. To book it, email ' + mailLink(BOOK_EMAIL) + '.',
+    contact: 'All booking and general inquiries go to ' + mailLink(BOOK_EMAIL) + '. For the Floorlords Studio specifically, email ' + mailLink(STUDIO_EMAIL) + '.',
+    social: 'You can find El Ni\u00f1o on Instagram at @bboyelnino \u2014 there are also links to TikTok, YouTube, Facebook, X, and Threads in the footer of this page. For bookings, email ' + mailLink(BOOK_EMAIL) + '.',
+    price: 'I cannot quote prices here \u2014 every booking is different. For rates and availability, email ' + mailLink(BOOK_EMAIL) + ' with your date, city, and what you need, and he will get back to you.',
+    fallback: 'I do not have that answer here, and I do not want to guess. For anything I cannot cover, email ' + mailLink(BOOK_EMAIL) + ' and he will help you direct.'
   };
-  var FALLBACK = "Good question. For anything specific, email bboyelninoboston@gmail.com for bookings, or floorlordsboston@gmail.com for the studio. Or tap one of the quick questions below.";
   var chatContainer = $(".chat-widget-container");
   var chatToggle = $("#chatToggle"), chatPanel = $("#chatPanel"),
-      chatClose = $("#chatClose"), chatMessages = $("#chatMessages"),
+      chatCloseBtn = $("#chatClose"), chatMessages = $("#chatMessages"),
       chatForm = $("#chatForm"), chatInput = $("#chatInput"),
-      chatQuick = $("#chatQuick"), chatCallout = $("#chatCallout");
-  var chatOpened = false;
-
+      chatQuick = $("#chatQuick");
+  var greeted = false;
   function addMsg(text, who) {
     var div = document.createElement("div");
     div.className = "msg " + who;
-    div.textContent = text;
+    if (who === "bot") { div.innerHTML = text; } else { div.textContent = text; }
     chatMessages.appendChild(div);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    return div;
   }
-  function botReply(text) { setTimeout(function () { addMsg(text, "bot"); }, 320); }
+  function answerFor(raw) {
+    var t = (raw || "").toLowerCase();
+    if (/\b(price|cost|fee|fees|rate|rates|how much|charge|pricing)\b/.test(t)) return ANSWERS.price;
+    if (t.indexOf("studio") !== -1 || t.indexOf("where") !== -1 || t.indexOf("location") !== -1 || t.indexOf("address") !== -1 || t.indexOf("cambridge") !== -1 || t.indexOf("harvard") !== -1) return ANSWERS.studio;
+    if (t.indexOf("workshop") !== -1 || t.indexOf("class") !== -1 || t.indexOf("teach") !== -1 || t.indexOf("lesson") !== -1 || t.indexOf("train") !== -1) return ANSWERS.workshops;
+    if (t.indexOf("judge") !== -1 || t.indexOf("judging") !== -1) return ANSWERS.judge;
+    if (t.indexOf("speak") !== -1 || t.indexOf("keynote") !== -1 || t.indexOf("talk") !== -1) return ANSWERS.speak;
+    if (t.indexOf("history") !== -1) return ANSWERS.history;
+    if (t.indexOf("event") !== -1 || t.indexOf("next") !== -1 || t.indexOf("miami") !== -1 || t.indexOf("december") !== -1 || t.indexOf("ground zero") !== -1 || t.indexOf("show") !== -1) return ANSWERS.event;
+    if (t.indexOf("instagram") !== -1 || t.indexOf("social") !== -1 || t.indexOf("tiktok") !== -1 || t.indexOf("youtube") !== -1 || t.indexOf("facebook") !== -1 || t.indexOf("threads") !== -1) return ANSWERS.social;
+    if (t.indexOf("contact") !== -1 || t.indexOf("email") !== -1 || t.indexOf("reach") !== -1 || t.indexOf("phone") !== -1) return ANSWERS.contact;
+    if (t.indexOf("book") !== -1 || t.indexOf("hire") !== -1 || t.indexOf("booking") !== -1) return ANSWERS.book;
+    if (t.indexOf("who") !== -1 || t.indexOf("alex") !== -1 || t.indexOf("diaz") !== -1 || t.indexOf("champion") !== -1 || t.indexOf("elnino") !== -1 || t.indexOf("el nino") !== -1 || t.indexOf("el ni\u00f1o") !== -1) return ANSWERS.who;
+    if (t.indexOf("service") !== -1 || t.indexOf("offer") !== -1 || t.indexOf("do you do") !== -1) return ANSWERS.services;
+    return ANSWERS.fallback;
+  }
   function setChat(open) {
     if (!chatPanel) return;
     chatPanel.classList.toggle("open", open);
-    chatPanel.setAttribute("aria-hidden", open ? "false" : "true");
-    if (chatToggle) chatToggle.setAttribute("aria-expanded", open ? "true" : "false");
     if (chatContainer) chatContainer.classList.toggle("open", open);
-    if (chatCallout) chatCallout.classList.toggle("gone", open);
-    if (open && !chatOpened) {
-      chatOpened = true;
-      botReply("Peace. Ask me about bookings, workshops, the studio, or where El Niño is battling next.");
+    if (chatToggle) {
+      chatToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      chatToggle.setAttribute("aria-label", open ? "Close chat: Ask about El Ni\u00f1o" : "Open chat: Ask about El Ni\u00f1o");
     }
-    if (open && chatInput) setTimeout(function () { chatInput.focus(); }, 250);
+    chatPanel.setAttribute("aria-hidden", open ? "false" : "true");
+    if (open && !greeted) { greeted = true; addMsg(ANSWERS.greeting, "bot"); }
+    if (open && chatInput) setTimeout(function () { try { chatInput.focus({ preventScroll: true }); } catch (e) { chatInput.focus(); } }, 60);
   }
-  if (chatToggle) chatToggle.addEventListener("click", function () {
-    setChat(!chatPanel.classList.contains("open"));
-  });
-  if (chatClose) chatClose.addEventListener("click", function () { setChat(false); });
+  if (chatToggle) chatToggle.addEventListener("click", function () { setChat(!chatPanel.classList.contains("open")); });
+  if (chatCloseBtn) chatCloseBtn.addEventListener("click", function () { setChat(false); if (chatToggle) chatToggle.focus(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && chatPanel && chatPanel.classList.contains("open")) setChat(false); });
   var heroChatBtn = $("#openChatQuick");
   if (heroChatBtn) heroChatBtn.addEventListener("click", function () { setChat(true); });
-  if (chatQuick) $$("button", chatQuick).forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var key = btn.getAttribute("data-q");
-      addMsg(btn.textContent.trim(), "user");
-      botReply(ANSWERS[key] || FALLBACK);
-    });
+  if (chatQuick) chatQuick.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest("button[data-q]") : null;
+    if (!btn) return;
+    addMsg(btn.textContent.trim(), "user");
+    var map = { book: ANSWERS.book, workshops: ANSWERS.workshops, studio: ANSWERS.studio, event: ANSWERS.event, who: ANSWERS.who };
+    var ans = map[btn.getAttribute("data-q")] || ANSWERS.fallback;
+    setTimeout(function () { addMsg(ans, "bot"); }, 180);
   });
-  function answerFor(text) {
-    var t = text.toLowerCase();
-    if (/(book|hire|cost|price|fee|rate)/.test(t)) return ANSWERS.book;
-    if (/(workshop|class|teach|masterclass|lesson|train)/.test(t)) return ANSWERS.workshops;
-    if (/(studio|cambridge|winthrop|where.*(studio|class))/.test(t)) return ANSWERS.studio;
-    if (/(next|event|battle|toronto|astana|kazakhstan|miami|show|tour|when)/.test(t)) return ANSWERS.event;
-    if (/(who|about|alex|history|bio)/.test(t)) return ANSWERS.who;
-    if (/(judge|judging)/.test(t)) return "El Niño judges battles from local jams to world finals. For judging bookings, email bboyelninoboston@gmail.com with your event date and city.";
-    if (/(speak|keynote|school|lecture)/.test(t)) return "El Niño speaks at schools, universities, and events on hip hop history and his 30 years in the culture. Email bboyelninoboston@gmail.com to book a talk.";
-    if (/(instagram|tiktok|youtube|social|follow)/.test(t)) return "Follow him at @bboyelnino on Instagram and TikTok, and on YouTube as Alex Diaz (Bboy El Niño). Links are at the bottom of this page.";
-    if (/(email|contact|reach)/.test(t)) return "Bookings: bboyelninoboston@gmail.com. Studio: floorlordsboston@gmail.com.";
-    return FALLBACK;
-  }
-  if (chatForm) chatForm.addEventListener("submit", function (ev) {
-    ev.preventDefault();
-    var text = chatInput.value.trim();
-    if (!text) return;
-    addMsg(text, "user");
+  if (chatForm) chatForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var val = chatInput.value.trim();
+    if (!val) return;
+    addMsg(val, "user");
     chatInput.value = "";
-    botReply(answerFor(text));
+    var ans = answerFor(val);
+    setTimeout(function () { addMsg(ans, "bot"); }, 180);
   });
 })();
